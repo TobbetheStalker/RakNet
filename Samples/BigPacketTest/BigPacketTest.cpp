@@ -32,7 +32,8 @@ using namespace RakNet;
 RakPeerInterface *client, *server;
 char *text;
 int totalDatarecived = 0;
-float totalPacketLoss = 0.f;
+float clientPacketLoss = 0.f;
+float serverPacketLoss = 0; 
 
 int main(void)
 {
@@ -168,6 +169,19 @@ int main(void)
 					// Keep the stat from updating until the messages move to the thread or it quits right away
 					nextStatTime=RakNet::GetTimeMS()+1000;
 				}
+
+				if (packet->data[0] == 252)
+				{
+					//Recived message that all data has arrived to the client
+					//Send over total data resent
+					printf("Recived 252 Packet\n");
+					char * message = new char[5];	//int + 1
+					message[0] = (unsigned char)251;
+					message[1] = (unsigned char)serverPacketLoss;
+					server->Send(message, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
+					printf("Sent 251 Packet\n");
+				}
+
 				if (packet->data[0]==ID_CONNECTION_LOST)
 					printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString());
 				else if (packet->data[0]==ID_DISCONNECTION_NOTIFICATION)
@@ -255,8 +269,10 @@ int main(void)
 						{
 							if (totalDatarecived >= GB)
 							{
-								quit=true;
-								break;
+								unsigned char ch = (unsigned char)252;	//Transfer Completed
+								client->Send((const char*)&ch, 1, MEDIUM_PRIORITY, RELIABLE_ORDERED, 1, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
+								stop = RakNet::GetTimeMS();
+
 							}
 							
 						}
@@ -266,6 +282,13 @@ int main(void)
 				else if (packet->data[0]==254)
 				{
  					printf("Got high priority message.\n");
+				}
+				else if (packet->data[0] == 251)
+				{
+					printf("Recived 251 Packet\n");
+					memcpy(&serverPacketLoss, &packet->data[1], sizeof(float));
+					quit = true;
+					break;
 				}
 				else if (packet->data[0]==ID_CONNECTION_LOST)
 					printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString());
@@ -305,7 +328,7 @@ int main(void)
 						printf("==== System %i ====\n", i+1);
 						printf("%s\n\n", text);
 
-						totalPacketLoss += rssReceiver.packetlossTotal;
+						serverPacketLoss += rssReceiver.packetlossTotal;
 					}
 				}
 			}
@@ -319,7 +342,7 @@ int main(void)
 
 		RakSleep(100);
 	}
-	stop=RakNet::GetTimeMS();
+	
 	double seconds = (double)(stop-start)/1000.0;
 
 	if (server)
@@ -329,7 +352,7 @@ int main(void)
 		printf("%s", text);
 	}
 
-	printf("%i bytes per second (%.2f seconds), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds, totalPacketLoss / totalDatarecived) ;
+	printf("%i bytes per second (%.2f seconds), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds, serverPacketLoss / totalDatarecived) ;
 	Gets(text,BIG_PACKET_SIZE);
 
 	delete []text;
