@@ -24,12 +24,15 @@
 bool quit;
 bool sentPacket=false;
 
-#define BIG_PACKET_SIZE 1073741824 //1073741824
-
+#define BIG_PACKET_SIZE 83296256 
+const int GB = 1073741824;
+//83296256
 using namespace RakNet;
 
 RakPeerInterface *client, *server;
 char *text;
+int totalDatarecived = 0;
+float totalPacketLoss = 0.f;
 
 int main(void)
 {
@@ -156,11 +159,11 @@ int main(void)
 						text[0]=(unsigned char) 255;
 
 
-					//int nrofpackets = 1073741824 / BIG_PACKET_SIZE + 1;
-					//for (int i = 0; i < nrofpackets; i++)
-					//{
+					int nrofpackets = GB / BIG_PACKET_SIZE + 1;
+					for (int i = 0; i < nrofpackets; i++)
+					{
 						server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
-					//}
+					}
 					
 					// Keep the stat from updating until the messages move to the thread or it quits right away
 					nextStatTime=RakNet::GetTimeMS()+1000;
@@ -194,7 +197,7 @@ int main(void)
 			packet = client->Receive();
 			while (packet)
 			{
-				if (packet->data[0]==ID_DOWNLOAD_PROGRESS)
+				if (packet->data[0]==ID_DOWNLOAD_PROGRESS)	//For each packet that are sent
 				{
 					RakNet::BitStream progressBS(packet->data, packet->length, false);
 					progressBS.IgnoreBits(8); // ID_DOWNLOAD_PROGRESS
@@ -206,12 +209,15 @@ int main(void)
 					progressBS.ReadBits( (unsigned char* ) &progress, BYTES_TO_BITS(sizeof(progress)), true );
 					progressBS.ReadBits( (unsigned char* ) &total, BYTES_TO_BITS(sizeof(total)), true );
 					progressBS.ReadBits( (unsigned char* ) &partLength, BYTES_TO_BITS(sizeof(partLength)), true );
-
-					printf("Progress: msgID=%i Progress %i/%i Partsize=%i\n",
+					
+					
+					printf("Progress: msgID=%i Progress %i/%i Partsize=%i TotalData:%d\n",
 						(unsigned char) packet->data[0],
 						progress,
 						total,
-						partLength);
+						partLength,
+						totalDatarecived);
+					
 				}
 				else if (packet->data[0]==255)
 				{
@@ -234,9 +240,10 @@ int main(void)
 						}
 					}
 
-					if (quit==false)
+					if (!quit)
 					{
 						printf("Test succeeded. %i bytes.\n", packet->length);
+						totalDatarecived += (int)packet->length;
 						bool repeat=false;
 						if (repeat)
 						{
@@ -246,8 +253,12 @@ int main(void)
 						}
 						else
 						{
-							quit=true;
-							break;
+							if (totalDatarecived >= GB)
+							{
+								quit=true;
+								break;
+							}
+							
 						}
 					}
 
@@ -293,6 +304,8 @@ int main(void)
 						StatisticsToString(&rssSender, text,2);
 						printf("==== System %i ====\n", i+1);
 						printf("%s\n\n", text);
+
+						totalPacketLoss += rssReceiver.packetlossTotal;
 					}
 				}
 			}
@@ -316,7 +329,7 @@ int main(void)
 		printf("%s", text);
 	}
 
-	printf("%i bytes per second (%.2f seconds). Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds) ;
+	printf("%i bytes per second (%.2f seconds), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds, totalPacketLoss / totalDatarecived) ;
 	Gets(text,BIG_PACKET_SIZE);
 
 	delete []text;
