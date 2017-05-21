@@ -33,7 +33,7 @@ RakPeerInterface *client, *server;
 char *text;
 int totalDatarecived = 0;
 int clientPacketLoss = 0;
-int serverPacketLoss = 0; 
+float serverPacketLoss = 0; 
 
 int main(void)
 {
@@ -328,7 +328,13 @@ int main(void)
 						printf("==== System %i ====\n", i+1);
 						printf("%s\n\n", text);
 
-						serverPacketLoss += rssReceiver.packetlossTotal;
+						float old = serverPacketLoss;
+						serverPacketLoss = rssSender.packetlossTotal;
+
+						if (old != serverPacketLoss)
+						{
+							int j = 0;
+						}
 					}
 				}
 			}
@@ -352,7 +358,7 @@ int main(void)
 		printf("%s", text);
 	}
 
-	printf("%i bytes per second (%.2f seconds), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds, serverPacketLoss / totalDatarecived) ;
+	printf("%i bytes per second (%.2f seconds), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds, serverPacketLoss) ;
 	Gets(text,BIG_PACKET_SIZE);
 
 	delete []text;
