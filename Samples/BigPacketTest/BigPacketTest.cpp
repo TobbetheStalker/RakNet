@@ -32,8 +32,8 @@ using namespace RakNet;
 RakPeerInterface *client, *server;
 char *text;
 int totalDatarecived = 0;
-float clientPacketLoss = 0.f;
-float serverPacketLoss = 0; 
+int clientPacketLoss = 0;
+int serverPacketLoss = 0; 
 
 int main(void)
 {
@@ -178,7 +178,7 @@ int main(void)
 					char * message = new char[5];	//int + 1
 					message[0] = (unsigned char)251;
 					message[1] = (unsigned char)serverPacketLoss;
-					server->Send(message, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
+					server->Send(message, sizeof(message), LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
 					printf("Sent 251 Packet\n");
 				}
 
