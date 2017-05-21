@@ -54,7 +54,7 @@ void CCRakNetSlidingWindow::Init(CCTimeType curTime, uint32_t maxDatagramPayload
 	nextCongestionControlBlock=0;
 	backoffThisBlock=speedUpThisBlock=false;
 	expectedNextSequenceNumber=0;
-	_isContinuousSend=false;
+	isContinuousSend=false;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::Update(CCTimeType curTime, bool hasDataToSendOrResend)
@@ -77,7 +77,7 @@ int CCRakNetSlidingWindow::GetTransmissionBandwidth(CCTimeType curTime, CCTimeTy
 	(void) curTime;
 	(void) timeSinceLastTick;
 
-	_isContinuousSend=isContinuousSend;
+	isContinuousSend=isContinuousSend;
 
 	if (unacknowledgedBytes<=cwnd)
 		return (int) (cwnd-unacknowledgedBytes);
@@ -165,7 +165,7 @@ void CCRakNetSlidingWindow::OnResend(CCTimeType curTime, RakNet::TimeUS nextActi
 	(void) curTime;
 	(void) nextActionTime;
 
-	if (_isContinuousSend && backoffThisBlock==false && cwnd>MAXIMUM_MTU_INCLUDING_UDP_HEADER*2)
+	if (isContinuousSend && backoffThisBlock==false && cwnd>MAXIMUM_MTU_INCLUDING_UDP_HEADER*2)
 	{
 		// Spec says 1/2 cwnd, but it never recovers because cwnd increases too slowly
 		//ssThresh=cwnd-8.0 * (MAXIMUM_MTU_INCLUDING_UDP_HEADER*MAXIMUM_MTU_INCLUDING_UDP_HEADER/cwnd);
@@ -188,7 +188,7 @@ void CCRakNetSlidingWindow::OnNAK(CCTimeType curTime, DatagramSequenceNumberType
 	(void) nakSequenceNumber;
 	(void) curTime;
 
-	if (_isContinuousSend && backoffThisBlock==false)
+	if (isContinuousSend && backoffThisBlock==false)
 	{
 		// Start congestion avoidance
 		ssThresh=cwnd/2;
@@ -221,7 +221,7 @@ void CCRakNetSlidingWindow::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBA
 		deviationRtt = deviationRtt + d * (std::abs(difference) - deviationRtt);
 	}
 
-	_isContinuousSend=isContinuousSend;
+	isContinuousSend=isContinuousSend;
 
 	if (isContinuousSend==false)
 		return;

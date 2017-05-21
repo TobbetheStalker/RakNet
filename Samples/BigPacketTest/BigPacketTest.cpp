@@ -24,7 +24,7 @@
 bool quit;
 bool sentPacket=false;
 
-#define BIG_PACKET_SIZE 83296256
+#define BIG_PACKET_SIZE 83296256 //1073741824
 
 using namespace RakNet;
 
@@ -154,7 +154,14 @@ int main(void)
 					}
 					else
 						text[0]=(unsigned char) 255;
-					server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
+
+
+					int nrofpackets = 1073741824 / BIG_PACKET_SIZE + 1;
+					for (int i = 0; i < nrofpackets; i++)
+					{
+						server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
+					}
+					
 					// Keep the stat from updating until the messages move to the thread or it quits right away
 					nextStatTime=RakNet::GetTimeMS()+1000;
 				}

@@ -39,8 +39,8 @@ else use congestion avoidance
 
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL==1
 
-#ifndef __CONGESTION_CONTROL_SLIDING_WINDOW_H
-#define __CONGESTION_CONTROL_SLIDING_WINDOW_H
+#ifndef _CONGESTION_CONTROL_SLIDING_WINDOW_H
+#define _CONGESTION_CONTROL_SLIDING_WINDOW_H
 
 #include "NativeTypes.h"
 #include "RakNetTime.h"
@@ -129,12 +129,12 @@ class CCRakNetSlidingWindow
 	/// hasBAndAS are possibly written with the ack, see OnSendAck()
 	/// B and AS are used in the calculations in UpdateWindowSizeAndAckOnAckPerSyn
 	/// B and AS are updated at most once per SYN 
-	void OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _BB, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber );
+	void OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond BB, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber );
 	void OnDuplicateAck( CCTimeType curTime, DatagramSequenceNumberType sequenceNumber );
 	
 	/// Call when you send an ack, to see if the ack should have the B and AS parameters transmitted
 	/// Call before calling OnSendAck()
-	void OnSendAckGetBAndAS(CCTimeType curTime, bool *hasBAndAS, BytesPerMicrosecond *_BB, BytesPerMicrosecond *_AS);
+	void OnSendAckGetBAndAS(CCTimeType curTime, bool *hasBAndAS, BytesPerMicrosecond *BB, BytesPerMicrosecond *_AS);
 
 	/// Call when we send an ack, to write B and AS if needed
 	/// B and AS are only written once per SYN, to prevent slow calculations
@@ -205,7 +205,7 @@ class CCRakNetSlidingWindow
 	/// If a sequence number is skipped, send a NAK for all skipped messages
 	DatagramSequenceNumberType expectedNextSequenceNumber;
 
-	bool _isContinuousSend;
+	bool isContinuousSend;
 
 	bool IsInSlowStart(void) const;
 
