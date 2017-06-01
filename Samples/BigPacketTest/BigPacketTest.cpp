@@ -315,35 +315,35 @@ int main(void)
 			}
 		}
 
-		if (RakNet::GetTimeMS() > nextStatTime)
-		{
-			nextStatTime=RakNet::GetTimeMS()+1000;
-			RakNetStatistics rssSender;
-			RakNetStatistics rssReceiver;
-			if (server)
-			{
-				unsigned int i;
-				unsigned short numSystems;
-				server->GetConnectionList(0,&numSystems);
-				if (numSystems>0)
-				{
-					for (i=0; i < numSystems; i++)
-					{
-						server->GetStatistics(server->GetSystemAddressFromIndex(i), &rssSender);
-						StatisticsToString(&rssSender, text,2);
-						printf("==== System %i ====\n", i+1);
-						printf("%s\n\n", text);
+		//if (RakNet::GetTimeMS() > nextStatTime)
+		//{
+		//	nextStatTime=RakNet::GetTimeMS()+1000;
+		//	RakNetStatistics rssSender;
+		//	RakNetStatistics rssReceiver;
+		//	if (server)
+		//	{
+		//		unsigned int i;
+		//		unsigned short numSystems;
+		//		server->GetConnectionList(0,&numSystems);
+		//		if (numSystems>0)
+		//		{
+		//			for (i=0; i < numSystems; i++)
+		//			{
+		//				server->GetStatistics(server->GetSystemAddressFromIndex(i), &rssSender);
+		//				StatisticsToString(&rssSender, text,2);
+		//				printf("==== System %i ====\n", i+1);
+		//				printf("%s\n\n", text);
 
-					}
-				}
-			}
-			/*if (client && server==0 && client->GetGUIDFromIndex(0)!=UNASSIGNED_RAKNET_GUID)
-			{
-				client->GetStatistics(client->GetSystemAddressFromIndex(0), &rssReceiver);
-				StatisticsToString(&rssReceiver, text,2);
-				printf("%s\n\n", text);
-			}*/
-		}
+		//			}
+		//		}
+		//	}
+		//	if (client && server==0 && client->GetGUIDFromIndex(0)!=UNASSIGNED_RAKNET_GUID)
+		//	{
+		//		client->GetStatistics(client->GetSystemAddressFromIndex(0), &rssReceiver);
+		//		StatisticsToString(&rssReceiver, text,2);
+		//		printf("%s\n\n", text);
+		//	}
+		//}
 
 		RakSleep(100);
 	}
