@@ -151,6 +151,8 @@ int main(void)
 				{
 					printf("Starting send\n");
 					start=RakNet::GetTimeMS();
+					
+					/*
 					if (BIG_PACKET_SIZE<=100000)
 					{
 						for (int i=0; i < BIG_PACKET_SIZE; i++)
@@ -158,8 +160,9 @@ int main(void)
 					}
 					else
 						text[0]=(unsigned char) 255;
+					*/
 
-
+					text[0] = (unsigned char)255;
 					int nrofpackets = GB / BIG_PACKET_SIZE + 1;
 					for (int i = 0; i < nrofpackets; i++)
 					{
@@ -241,6 +244,8 @@ int main(void)
 						quit=true;
 						break;
 					}
+
+					/*
 					if (BIG_PACKET_SIZE<=100000)
 					{
 						for (int i=0; i < BIG_PACKET_SIZE; i++)
@@ -253,6 +258,7 @@ int main(void)
 							}
 						}
 					}
+					*/
 
 					if (!quit)
 					{

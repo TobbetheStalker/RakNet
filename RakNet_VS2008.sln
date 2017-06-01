@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Autopatcher", "Autopatcher", "{82B9C30B-4865-4402-BAF2-D3A40A963216}"
 EndProject
@@ -285,8 +285,10 @@ Global
 		{3C02D25B-FEBC-4CE3-B671-8902EA109ECC}.Release|Win32.ActiveCfg = Release|Win32
 		{3C02D25B-FEBC-4CE3-B671-8902EA109ECC}.Release|x64.ActiveCfg = Release|Win32
 		{5B38727A-2D86-4235-907D-37A1530392FA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5B38727A-2D86-4235-907D-37A1530392FA}.Debug|Win32.Build.0 = Debug|Win32
 		{5B38727A-2D86-4235-907D-37A1530392FA}.Debug|x64.ActiveCfg = Debug|Win32
 		{5B38727A-2D86-4235-907D-37A1530392FA}.Release|Win32.ActiveCfg = Release|Win32
+		{5B38727A-2D86-4235-907D-37A1530392FA}.Release|Win32.Build.0 = Release|Win32
 		{5B38727A-2D86-4235-907D-37A1530392FA}.Release|x64.ActiveCfg = Release|Win32
 		{D58C47D6-EC1B-4B97-A8F7-79A670935011}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D58C47D6-EC1B-4B97-A8F7-79A670935011}.Debug|x64.ActiveCfg = Debug|Win32
