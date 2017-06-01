@@ -7,6 +7,9 @@
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "RakPeerInterface.h"
 #include "BitStream.h"
@@ -24,19 +27,25 @@
 bool quit;
 bool sentPacket=false;
 
-#define BIG_PACKET_SIZE 83296256 
+#define BIG_PACKET_SIZE 41943040
 const int GB = 1073741824;
-//83296256
+//83886080
+//167772160
+//41943040
+
 using namespace RakNet;
 
 RakPeerInterface *client, *server;
 char *text;
 int totalDatarecived = 0;
 int clientPacketLoss = 0;
-float serverPacketLoss = 0; 
+float serverPacketLoss = 0;
+
 
 int main(void)
 {
+	std::ofstream file;
+
 	client=server=0;
 
 	text= new char [BIG_PACKET_SIZE];
@@ -348,7 +357,7 @@ int main(void)
 		RakSleep(100);
 	}
 	
-	double seconds = (double)(stop-start)/1000.0;
+	double ms = (double)(stop-start);
 
 	if (server)
 	{
@@ -357,8 +366,18 @@ int main(void)
 		printf("%s", text);
 	}
 
-	printf("%i bytes per second (%.2f seconds), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds, serverPacketLoss) ;
+	printf("%i bytes per ms (%.2f ms), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / ms), ms, serverPacketLoss) ;
 	Gets(text,BIG_PACKET_SIZE);
+
+	std::string filename = "RaknetLog ";
+	filename.append((char*)BIG_PACKET_SIZE);
+
+	file.open("../Logs/" + filename + ".tsv");
+	file << filename << "\n";
+	file << "Packet Size: " << BIG_PACKET_SIZE << " KB\n";
+	file << "Time (ms)	Loss\n";
+	file << ms << "	" << serverPacketLoss << "\n";
+	file.close();
 
 	delete []text;
 	RakNet::RakPeerInterface::DestroyInstance(client);
