@@ -216,24 +216,24 @@ int main(void)
 			{
 				if (packet->data[0]==ID_DOWNLOAD_PROGRESS)	//For each packet that are sent
 				{
-					RakNet::BitStream progressBS(packet->data, packet->length, false);
-					progressBS.IgnoreBits(8); // ID_DOWNLOAD_PROGRESS
-					unsigned int progress;
-					unsigned int total;
-					unsigned int partLength;
+					//RakNet::BitStream progressBS(packet->data, packet->length, false);
+					//progressBS.IgnoreBits(8); // ID_DOWNLOAD_PROGRESS
+					//unsigned int progress;
+					//unsigned int total;
+					//unsigned int partLength;
 
-					// Disable endian swapping on reading this, as it's generated locally in ReliabilityLayer.cpp
-					progressBS.ReadBits( (unsigned char* ) &progress, BYTES_TO_BITS(sizeof(progress)), true );
-					progressBS.ReadBits( (unsigned char* ) &total, BYTES_TO_BITS(sizeof(total)), true );
-					progressBS.ReadBits( (unsigned char* ) &partLength, BYTES_TO_BITS(sizeof(partLength)), true );
-					
-					
-					printf("Progress: msgID=%i Progress %i/%i Partsize=%i TotalData:%d\n",
-						(unsigned char) packet->data[0],
-						progress,
-						total,
-						partLength,
-						totalDatarecived);
+					//// Disable endian swapping on reading this, as it's generated locally in ReliabilityLayer.cpp
+					//progressBS.ReadBits( (unsigned char* ) &progress, BYTES_TO_BITS(sizeof(progress)), true );
+					//progressBS.ReadBits( (unsigned char* ) &total, BYTES_TO_BITS(sizeof(total)), true );
+					//progressBS.ReadBits( (unsigned char* ) &partLength, BYTES_TO_BITS(sizeof(partLength)), true );
+					//
+					//
+					//printf("Progress: msgID=%i Progress %i/%i Partsize=%i TotalData:%d\n",
+					//	(unsigned char) packet->data[0],
+					//	progress,
+					//	total,
+					//	partLength,
+					//	totalDatarecived);
 					
 				}
 				else if (packet->data[0]==255)
@@ -334,22 +334,15 @@ int main(void)
 						printf("==== System %i ====\n", i+1);
 						printf("%s\n\n", text);
 
-						float old = serverPacketLoss;
-						serverPacketLoss = rssSender.packetlossTotal;
-
-						if (old != serverPacketLoss)
-						{
-							int j = 0;
-						}
 					}
 				}
 			}
-			if (client && server==0 && client->GetGUIDFromIndex(0)!=UNASSIGNED_RAKNET_GUID)
+			/*if (client && server==0 && client->GetGUIDFromIndex(0)!=UNASSIGNED_RAKNET_GUID)
 			{
 				client->GetStatistics(client->GetSystemAddressFromIndex(0), &rssReceiver);
 				StatisticsToString(&rssReceiver, text,2);
 				printf("%s\n\n", text);
-			}
+			}*/
 		}
 
 		RakSleep(100);
