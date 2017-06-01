@@ -27,7 +27,7 @@
 bool quit;
 bool sentPacket=false;
 
-#define BIG_PACKET_SIZE 41943040
+#define BIG_PACKET_SIZE 83886080
 const int GB = 1073741824;
 //83886080
 //167772160
@@ -366,18 +366,20 @@ int main(void)
 		printf("%s", text);
 	}
 
-	printf("%i bytes per ms (%.2f ms), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / ms), ms, serverPacketLoss) ;
-	Gets(text,BIG_PACKET_SIZE);
+	std::string filename = "RaknetLog";
+	//filename.append((char*)BIG_PACKET_SIZE);
 
-	std::string filename = "RaknetLog ";
-	filename.append((char*)BIG_PACKET_SIZE);
-
-	file.open("../Logs/" + filename + ".tsv");
+	file.open(filename + ".tsv");
 	file << filename << "\n";
-	file << "Packet Size: " << BIG_PACKET_SIZE << " KB\n";
+	file << "Packet Size: " << BIG_PACKET_SIZE << " B\n";
 	file << "Time (ms)	Loss\n";
 	file << ms << "	" << serverPacketLoss << "\n";
 	file.close();
+
+	printf("%i bytes per ms (%.2f ms), Average Packet Loss: %d. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / ms), ms, serverPacketLoss) ;
+	Gets(text,BIG_PACKET_SIZE);
+
+
 
 	delete []text;
 	RakNet::RakPeerInterface::DestroyInstance(client);
