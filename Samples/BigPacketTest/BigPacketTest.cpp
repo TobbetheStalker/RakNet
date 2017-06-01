@@ -163,10 +163,10 @@ int main(void)
 					*/
 
 					text[0] = (unsigned char)255;
-					int nrofpackets = GB / BIG_PACKET_SIZE + 1;
+					int nrofpackets = (GB / BIG_PACKET_SIZE) + 1;
 					for (int i = 0; i < nrofpackets; i++)
 					{
-						server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
+						server->Send(text, BIG_PACKET_SIZE, HIGH_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
 					}
 					
 					// Keep the stat from updating until the messages move to the thread or it quits right away
